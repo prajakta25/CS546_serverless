@@ -2,6 +2,7 @@
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
+#include <stdarg.h>
 using namespace std;
 int main(int argc, char** argv) {
     string obj="",freq="",proc="",bsize="";
@@ -16,13 +17,20 @@ int main(int argc, char** argv) {
             //char *args[]={argv[1],argv[2]}; 
             //execvp("./bcast",args); 
             clock_t start = clock();
-            string cmd= "mpiexec -n " + proc + " ./" + obj + " " + bsize + " " + freq;
-            const char *command = cmd.c_str(); 
-            cout<<cmd<<endl;
-            system(command);
+            //string cmd= "mpiexec -n " + proc + " ./" + obj + " " + bsize + " " + freq;
+            //string cmd1= "mpiexec -n " + proc + " ./" + obj + " ";
+            /*const char *command = cmd.c_str(); 
+            char *c = (char*)(cmd1.c_str()); */
+            char *b = (char*)(bsize.c_str()); 
+            char *f = (char*)(freq.c_str()); 
+            char *args[]= {"./bcast",b,f,NULL};
+            //system(command);
             cout<<"Child"<<endl;  
-            usleep((1000/stoi(freq) - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
+            int r = execvp(args[0], args );
+            cout<<"r "<<r<<endl;
+            //usleep((1000/stoi(freq) - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
             cout<<"Exit"<<endl;
+            exit(-1);
         }
         else if (pid > 0)
         {
