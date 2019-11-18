@@ -32,7 +32,7 @@ int main( int argc, char **argv)
 
     double endtime = MPI_Wtime();
     if (rank ==0) {
-        cout<<"{\"Scatter\" :"<<endtime-starttime<<"}"<<endl;
+        cout<<"MPI_Scatter "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
     } 
     MPI_Finalize();
     return 0;

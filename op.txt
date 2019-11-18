@@ -1,4 +1,1 @@
-
-real	0m0.004s
-user	0m0.001s
-sys	0m0.002s
+MPI_Collective Buffer_Size_KB Frequncy TimeTaken

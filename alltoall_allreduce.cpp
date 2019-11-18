@@ -55,9 +55,9 @@ int main( int argc, char *argv[] )
     MPI_Allreduce( &status, &gstatus, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD );
     double endtime=MPI_Wtime();
     if (rank == 0) {
-        cout<<"{\"AlltoAll_Allreduce\" :"<<(endtime-starttime)<<"}"<<endl;
+        cout<<"MPI_Alltoall_Allreduce "<<chunk<<" "<<freq<<" "<<endtime-starttime<<endl;
         if (gstatus != 0) {
-            printf("all_to_all returned %d\n",gstatus);fflush(stdout);
+            //printf("all_to_all returned %d\n",gstatus);fflush(stdout);
         }
     }
     free(sb);

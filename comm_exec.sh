@@ -1,55 +1,7 @@
 #!/bin/bash
-declare -a bsize
-declare -a freq
-declare -a pattern=(0 0 0 0 0 0 0)
+source config
 
-echo "Enter the number of messages to be transmitted : "
-read n
-echo "Enter the buffer size for each message in KB "
-for ((i=0; i<$n; i++))
-do
-echo "Buffer bsize for message $[$i+1]"
-read bsize[i]
-done
-
-echo ""
-echo "Enter f"
-read f
-echo "Enter the frequency for each transmittion in ms : "
-for ((i=0; i<$f; i++))
-do
-read freq[i]
-done
-
-flag=0
-while [ $flag -lt 1 ]
-do
-    echo ""
-    echo "Select"
-    echo -e  "0. MPI Broadcast\n1. MPI Scatter\n2. MPI Gather\n3. MPI Scatter Gather\n4. MPI Send Receive\n5. MPI iSend iReceive\n6. MPI Alltoall Allreduce"
-    read ch
-
-    if [ ${pattern[$ch]} -eq 1 ]; then
-        echo ""
-        echo "Option is already selected"
-    else
-        pattern[$ch]=1
-    fi
-
-    echo ""
-    echo "Do you want to select more option? y/n"
-    read choice
-
-    if [ $choice = "N" -o $choice = "n" ]; then
-        flag=$(($flag+1))
-    fi
-done 
-
-echo ""
-echo "Enter the no. of processors to be used"
-read proc
-
-echo "MPI_Collective Buffer_Size_KB Frequncy TimeTaken" > output.txt
+echo "MPI_Collective Buffer_Size_KB Freqeuncy Time_Taken" > output.txt
 for ((i=0; i< ${#pattern[*]}; i++ ))
 do
     if [ ${pattern[$i]} -eq 1 ]; then
@@ -97,6 +49,12 @@ do
                 mpic++ alltoall_allreduce.cpp -o aa_ar -I '/usr/local/Cellar/mpich/3.3.1/include'
                 mpiexec -n "$proc" ./aa_ar "${bsize[$j]}" "${freq[$k]}" >> output.txt
                 echo ""
+                fi
+
+                if [ $i -eq 7 ]; then
+                mpic++ alltoallv.cpp -o av -I '/usr/local/Cellar/mpich/3.3.1/include'
+                mpiexec -n "$proc" ./av "${bsize[$j]}" "${freq[$k]}" >> output.txt
+                echo "Done"
                 fi
 
             done

@@ -88,7 +88,7 @@ int main( int argc, char **argv)
 
     MPI_Reduce( &num_errors, &tot_errors, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD );
     if (rank == 0 && tot_errors == 0) 
-         cout<<"{\"Bcast\" :"<<endtime-starttime<<"}"<<endl;
+         cout<<"MPI_Bcast "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
     fflush(stdout);
     free(buf);
     MPI_Finalize();

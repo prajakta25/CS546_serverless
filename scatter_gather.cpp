@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
     float original_data_avg =
       compute_avg(rand_nums, num_elements_per_proc * world_size);
    // printf("Avg computed across original data is %f\n", original_data_avg);
-    cout<<"{\"Scatter_Gather\" :"<<endtime-starttime<<"}"<<endl;
+    cout<<"MPI_Scather_Gather "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
   }
 
   // Clean up

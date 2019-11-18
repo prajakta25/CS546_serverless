@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     MPI_Wait(&request2, &status);
     double endtime=MPI_Wtime();
     if (myid==0) {
-         cout<<"{\"Isend_Recv\" :"<<endtime-starttime<<"}"<<endl;
+         cout<<"MPI_Isend_Irecv "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
     }
     MPI_Finalize();
     return 0;

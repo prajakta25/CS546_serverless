@@ -32,7 +32,7 @@ int main( int argc, char **argv)
     MPI_Gather( buf, bsize, MPI_INT, recvBuf, bsize, MPI_INT, 0, MPI_COMM_WORLD); 
     double endtime = MPI_Wtime();
     if (rank ==0) {
-        cout<<"{\"Gather\" :"<<endtime-starttime<<"}"<<endl;
+        cout<<"MPI_Gather "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
     } 
     MPI_Finalize();
     return 0;

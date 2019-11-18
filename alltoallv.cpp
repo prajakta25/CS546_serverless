@@ -85,7 +85,7 @@ int main( int argc, char **argv )
     free( rbuf );
     free( sbuf );
     if (rank ==0) {
-         cout<<"{\"Alltoallv\" :"<<endtime-starttime<<"}"<<endl;
+         cout<<"MPI_Alltoallv "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
     }
     MPI_Finalize();
     return 0;
