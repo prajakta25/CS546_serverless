@@ -22,17 +22,24 @@ int main( int argc, char **argv)
     }
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int *buf = (int *) malloc(sizeof(int)*bsize);
-    int *recvBuf; 
-    if (rank == 0) {
-       memset(buf,4,bsize * sizeof(int));
-       recvBuf = (int *) malloc(sizeof(int)*bsize);
+    int cnt=0;
+    clock_t start = clock();
+    while (cnt < 5) {
+        int *buf = (int *) malloc(sizeof(int)*bsize);
+        int *recvBuf; 
+        if (rank == 0) {
+        memset(buf,4,bsize * sizeof(int));
+        recvBuf = (int *) malloc(sizeof(int)*bsize);
+        }
+        MPI_Gather( buf, bsize, MPI_INT, recvBuf, bsize, MPI_INT, 0, MPI_COMM_WORLD); 
+        cnt++;
+        free(buf);
+        free(recvBuf);
+        usleep((1000/freq - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
     }
-    double starttime = MPI_Wtime();
-    MPI_Gather( buf, bsize, MPI_INT, recvBuf, bsize, MPI_INT, 0, MPI_COMM_WORLD); 
-    double endtime = MPI_Wtime();
+    clock_t end = clock();
     if (rank ==0) {
-        cout<<"MPI_Gather "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
+        cout<<"MPI_Gather "<<bsize<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     } 
     MPI_Finalize();
     return 0;

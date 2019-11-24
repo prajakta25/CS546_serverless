@@ -50,17 +50,19 @@ int main( int argc, char *argv[] )
         sb[i] = rank + 1;
         rb[i] = 0;
     }
-    
-    status = MPI_Alltoall(sb, chunk, MPI_INT, rb, chunk, MPI_INT, MPI_COMM_WORLD);
-    double starttime=MPI_Wtime();
-    MPI_Allreduce( &status, &gstatus, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD );
-    double endtime=MPI_Wtime();
+    int cnt=0;
+    clock_t start = clock();
+    while (cnt<5) {
+        status = MPI_Alltoall(sb, chunk, MPI_INT, rb, chunk, MPI_INT, MPI_COMM_WORLD);
+        
+        MPI_Allreduce( &status, &gstatus, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD );
+        cnt++;
+       usleep((1000/freq - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
+    }
+    clock_t end=clock();
     
     if (rank == 0) {
-        cout<<"MPI_Allreduce "<<chunk<<" "<<freq<<" "<<endtime-starttime<<endl;
-        if (gstatus != 0) {
-            //printf("all_to_all returned %d\n",gstatus);fflush(stdout);
-        }
+        cout<<"MPI_Allreduce "<<chunk<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     }
     free(sb);
     free(rb);
