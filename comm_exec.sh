@@ -1,7 +1,7 @@
 #!/bin/bash
 source config
 
-echo "MPI_Collective Buffer_Size_KB Freqeuncy Time_Taken" > output.txt
+echo "MPI_Collective Buffer_Size_KB Freqeuncy Time_Taken_ms" > output.txt
 for ((i=0; i< ${#pattern[*]}; i++ ))
 do
     if [ ${pattern[$i]} -eq 1 ]; then
@@ -46,15 +46,21 @@ do
                 fi
 
                 if [ $i -eq 6 ]; then
-                mpic++ alltoall_allreduce.cpp -o aa_ar -I '/usr/local/Cellar/mpich/3.3.1/include'
-                mpiexec -n "$proc" ./aa_ar "${bsize[$j]}" "${freq[$k]}" >> output.txt
+                mpic++ alltoall.cpp -o atoa -I '/usr/local/Cellar/mpich/3.3.1/include'
+                mpiexec -n "$proc" ./atoa "${bsize[$j]}" "${freq[$k]}" >> output.txt
                 echo ""
                 fi
 
                 if [ $i -eq 7 ]; then
-                mpic++ alltoallv.cpp -o av -I '/usr/local/Cellar/mpich/3.3.1/include'
-                mpiexec -n "$proc" ./av "${bsize[$j]}" "${freq[$k]}" >> output.txt
-                echo "Done"
+                mpic++ allreduce.cpp -o allreduce -I '/usr/local/Cellar/mpich/3.3.1/include'
+                mpiexec -n "$proc" ./allreduce "${bsize[$j]}" "${freq[$k]}" >> output.txt
+                echo ""
+                fi
+
+                if [ $i -eq 8 ]; then
+                mpic++ alltoall_allreduce.cpp -o aa_ar -I '/usr/local/Cellar/mpich/3.3.1/include'
+                mpiexec -n "$proc" ./aa_ar "${bsize[$j]}" "${freq[$k]}" >> output.txt
+                echo ""
                 fi
 
             done
