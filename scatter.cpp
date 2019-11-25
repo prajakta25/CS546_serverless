@@ -37,7 +37,7 @@ int main( int argc, char **argv)
     }
     clock_t end = clock();
     if (rank ==0) {
-        cout<<"MPI_Scatter "<<bsize<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
+        cout<<"MPI_Scatter "<<bsize/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     } 
     MPI_Finalize();
     return 0;

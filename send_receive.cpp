@@ -162,7 +162,7 @@ int main(int argc, char **argv)
     if (rank ==0) {
         endwtime = MPI_Wtime();
         //printf("wall clock time = %f\n", endwtime - startwtime);
-        cout<<"MPI_Send_Recv "<<bsize<<" "<<freq<<" "<<endwtime-startwtime<<endl;
+        cout<<"MPI_Send_Recv "<<bsize/1024<<" "<<freq<<" "<<endwtime-startwtime<<endl;
     }
     
     MPI_Finalize();

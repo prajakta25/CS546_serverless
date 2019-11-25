@@ -60,7 +60,7 @@ int main( int argc, char *argv[] )
     }
     clock_t end=clock();
     if (rank == 0) {
-        cout<<"MPI_Alltoall_Allreduce "<<chunk<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
+        cout<<"MPI_Alltoall_Allreduce "<<chunk/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
         if (gstatus != 0) {
             //printf("all_to_all returned %d\n",gstatus);fflush(stdout);
         }

@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
     clock_t end=clock();
     
     if (rank == 0) {
-        cout<<"MPI_Allreduce "<<chunk<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
+        cout<<"MPI_Allreduce "<<chunk/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     }
     free(sb);
     free(rb);

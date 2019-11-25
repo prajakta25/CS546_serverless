@@ -90,7 +90,7 @@ int main( int argc, char **argv)
 
     MPI_Reduce( &num_errors, &tot_errors, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD );
     if (rank == 0 && tot_errors == 0) 
-         cout<<"MPI_Bcast "<<bsize<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
+         cout<<"MPI_Bcast "<<bsize/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     fflush(stdout);
     free(buf);
     MPI_Finalize();

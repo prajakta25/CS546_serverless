@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     }
     clock_t end = clock();
     if (myid==0) {
-         cout<<"MPI_Isend_Irecv "<<bsize<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
+         cout<<"MPI_Isend_Irecv "<<bsize/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     }
     MPI_Finalize();
     return 0;
