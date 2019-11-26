@@ -4,6 +4,7 @@
 #include <mpi.h>
 #include <assert.h>
 #include <iostream>
+#include <unistd.h>
 using namespace std;
 
 // Creates an array of random numbers. Each number has a value from 0 - 1
@@ -52,54 +53,55 @@ int main(int argc, char** argv) {
   // Create a random array of elements on the root process. Its total
   // size will be the number of elements per process times the number
   // of processes
-  double starttime = MPI_Wtime();
+
+  int cnt=0;
+  clock_t start = clock();
   float *rand_nums = NULL;
-  if (world_rank == 0) {
-    rand_nums = create_rand_nums(num_elements_per_proc * world_size);
+  while (cnt<5) {
+      if (world_rank == 0) {
+      rand_nums = create_rand_nums(num_elements_per_proc * world_size);
+    }
+
+    // For each process, create a buffer that will hold a subset of the entire
+    // array
+    float *sub_rand_nums = (float *)malloc(sizeof(float) * num_elements_per_proc);
+    assert(sub_rand_nums != NULL);
+
+    // Scatter the random numbers from the root process to all processes in
+    // the MPI world
+    MPI_Scatter(rand_nums, num_elements_per_proc, MPI_FLOAT, sub_rand_nums,
+                num_elements_per_proc, MPI_FLOAT, 0, MPI_COMM_WORLD);
+
+    // Compute the average of your subset
+    float sub_avg = compute_avg(sub_rand_nums, num_elements_per_proc);
+
+    // Gather all partial averages down to the root process
+    float *sub_avgs = NULL;
+    if (world_rank == 0) {
+      sub_avgs = (float *)malloc(sizeof(float) * world_size);
+      assert(sub_avgs != NULL);
+    }
+    MPI_Gather(&sub_avg, 1, MPI_FLOAT, sub_avgs, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
+    if (world_rank == 0) {
+      float avg = compute_avg(sub_avgs, world_size);
+      float original_data_avg =
+        compute_avg(rand_nums, num_elements_per_proc * world_size);
+    }
+
+    // Clean up
+    if (world_rank == 0) {
+      free(rand_nums);
+      free(sub_avgs);
+    }
+    free(sub_rand_nums);
+    cnt++;
+    usleep((1000/freq - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
   }
-
-  // For each process, create a buffer that will hold a subset of the entire
-  // array
-  float *sub_rand_nums = (float *)malloc(sizeof(float) * num_elements_per_proc);
-  assert(sub_rand_nums != NULL);
-
-  // Scatter the random numbers from the root process to all processes in
-  // the MPI world
-  MPI_Scatter(rand_nums, num_elements_per_proc, MPI_FLOAT, sub_rand_nums,
-              num_elements_per_proc, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-  // Compute the average of your subset
-  float sub_avg = compute_avg(sub_rand_nums, num_elements_per_proc);
-
-  // Gather all partial averages down to the root process
-  float *sub_avgs = NULL;
-  if (world_rank == 0) {
-    sub_avgs = (float *)malloc(sizeof(float) * world_size);
-    assert(sub_avgs != NULL);
+  clock_t end = clock();
+    if (world_rank == 0) {
+    cout<<"MPI_Scather_Gather "<<bsize/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
   }
-  MPI_Gather(&sub_avg, 1, MPI_FLOAT, sub_avgs, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-  // Now that we have all of the partial averages on the root, compute the
-  // total average of all numbers. Since we are assuming each process computed
-  // an average across an equal amount of elements, this computation will
-  // produce the correct answer.
-  double endtime = MPI_Wtime();
-  if (world_rank == 0) {
-    float avg = compute_avg(sub_avgs, world_size);
-   // printf("Avg of all elements is %f\n", avg);
-    // Compute the average across the original data for comparison
-    float original_data_avg =
-      compute_avg(rand_nums, num_elements_per_proc * world_size);
-   // printf("Avg computed across original data is %f\n", original_data_avg);
-    cout<<"MPI_Scather_Gather "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
-  }
-
-  // Clean up
-  if (world_rank == 0) {
-    free(rand_nums);
-    free(sub_avgs);
-  }
-  free(sub_rand_nums);
+  
 
   MPI_Barrier(MPI_COMM_WORLD);
   MPI_Finalize();

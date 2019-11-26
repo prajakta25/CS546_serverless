@@ -31,7 +31,7 @@ int main( int argc, char **argv)
         if (strcmp(argv[1], "-novalidate") == 0 || strcmp(argv[1], "-noverify") == 0)
             bVerify = 0;
     }
-    double starttime = MPI_Wtime();
+    clock_t start;
     buf = (int *) malloc(sizes[NUM_SIZES-1]*sizeof(int));
     memset(buf, 0, sizes[NUM_SIZES-1]*sizeof(int));
     for (n=0; n<NUM_SIZES; n++)
@@ -40,6 +40,8 @@ int main( int argc, char **argv)
         {
             fflush(stdout);
         }
+
+        start = clock();
         for (reps=0; reps < NUM_REPS; reps++)
         {
             if (bVerify)
@@ -81,14 +83,14 @@ int main( int argc, char **argv)
                     fflush(stdout);
                 }
             }
-            //sleep(1000/freq);
+            usleep((1000/freq - ((clock()-start)/ (double)(CLOCKS_PER_SEC / 1000)))*1000);
         }
     }
-    double endtime = MPI_Wtime();
+    clock_t end = clock();
 
     MPI_Reduce( &num_errors, &tot_errors, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD );
     if (rank == 0 && tot_errors == 0) 
-         cout<<"MPI_Bcast "<<bsize<<" "<<freq<<" "<<endtime-starttime<<endl;
+         cout<<"MPI_Bcast "<<bsize/1024<<" "<<freq<<" "<<((end-start)/( (double)(CLOCKS_PER_SEC / 1000)))/1000<<endl;
     fflush(stdout);
     free(buf);
     MPI_Finalize();
